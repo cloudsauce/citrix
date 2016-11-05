@@ -1,0 +1,36 @@
+#*****************************************************************************************************
+# Script        : GetPVSWriteCacheInRamSize.ps1
+# Author        : Matthew Nichols - <a href="http://www.mattnics.com">http://www.mattnics.com</a> -twitter - @mattnics
+# Creation Date : 16-03-2015
+# Usage         : Query the current PVS RAM Cache size - Based on looking at the Pool Non Paged Memory
+#
+
+# Local computer’s non Pool Non Page Bytes
+# Get-PVSRamCache
+
+# Remote computer’s uptime with prompt for credential
+# Get-PVSRamCache -ComputerName “Server01″ -Credential (Get-Credential)
+
+# This function can be used in a pipeline
+# “Server01″, “Server02″, “Server03″ | Get-PVSRamCache
+
+#*****************************************************************************************************
+
+function Get-PVSRamCache
+{
+[CmdletBinding()]
+param (
+[Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
+[Alias(“CN”)]
+[String]$ComputerName = $Env:ComputerName,
+
+[Parameter(Position = 1, Mandatory = $false)]
+[Alias(“RunAs”)]
+[System.Management.Automation.Credential()]$Credential = [System.Management.Automation.PSCredential]::Empty
+)
+process
+{
+“{1}MB -- {0}” -f $ComputerName,
+[math]::truncate((Get-WmiObject Win32_PerfFormattedData_PerfOS_Memory -ComputerName $ComputerName -Credential $Credential).PoolNonPagedBytes /1MB)
+}
+}
