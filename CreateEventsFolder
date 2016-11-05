@@ -1,0 +1,8 @@
+Get-BrokerMachine -MachineName YW\CTXP*  | %{
+         Invoke-Command -Computername $_.DNSName -ScriptBlock { 
+             $setupFolder = "D:\Events"
+             Write-Host "Creating Events Folder"
+             New-Item -Path $setupFolder -type directory -Force 
+             Write-Host "Folder creation complete"
+         }
+}
